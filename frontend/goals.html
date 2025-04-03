@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objectifs - NutriTrack</title>
+    <link rel="stylesheet" href="style.css">
+    <style>form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Labels du formulaire */
+    label {
+        font-weight: bold;
+        font-size: 16px;
+    }
+    
+    /* Champs de saisie */
+    input[type="number"],
+    input[type="text"] {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+    
+    /* Bouton d'envoi */
+    button[type="submit"] {
+        padding: 12px 20px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    
+    /* Affichage des objectifs actuels */
+    #current-goals {
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    #current-goals p {
+        font-size: 18px;
+        color: #666;
+    }
+    
+    /* Améliorations générales */
+    input[type="number"], input[type="text"] {
+        width: 100%;
+    }
+    
+    form > button {
+        align-self: center;
+    }</style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="meals.html">Repas</a></li>
+            <li><a href="goals.html">Objectifs</a></li>
+            <li><a href="stats.html">Statistiques</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>Définir vos Objectifs Nutritionnels</h1>
+
+        <form id="goal-form">
+            <label for="caloriesGoal">Calories journalières :</label>
+            <input type="number" id="caloriesGoal" name="caloriesGoal" required>
+
+            <label for="proteinsGoal">Protéines (g) :</label>
+            <input type="number" id="proteinsGoal" name="proteinsGoal" required>
+
+            <label for="carbsGoal">Glucides (g) :</label>
+            <input type="number" id="carbsGoal" name="carbsGoal" required>
+
+            <label for="fatsGoal">Lipides (g) :</label>
+            <input type="number" id="fatsGoal" name="fatsGoal" required>
+
+            <label for="userId">ID Utilisateur :</label>
+            <input type="text" id="userId" name="userId" required>
+
+            <button type="submit">Enregistrer</button>
+        </form>
+
+        <div id="current-goals">
+            <h2>Objectifs Actuels</h2>
+            <p id="current-goals-text">Aucun objectif défini</p>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('goal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const caloriesGoal = document.getElementById('caloriesGoal').value;
+    const proteinsGoal = document.getElementById('proteinsGoal').value;
+    const carbsGoal = document.getElementById('carbsGoal').value;
+    const fatsGoal = document.getElementById('fatsGoal').value;
+    const userId = document.getElementById('userId').value;
+
+    const response = await fetch('http://localhost:5001/goals', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            caloriesGoal,
+            proteinsGoal,
+            carbsGoal,
+            fatsGoal,
+            userId,
+        }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+        alert('Objectifs enregistrés avec succès');
+        fetchGoals(userId);
+    } else {
+        alert('Erreur lors de l\'enregistrement des objectifs');
+    }
+});
+
+// Fonction pour récupérer les objectifs existants
+async function fetchGoals(userId) {
+    const response = await fetch(`http://localhost:5001/goals/${userId}`);
+    const data = await response.json();
+    if (response.ok) {
+        document.getElementById('current-goals-text').innerHTML = `
+            Calories : ${data.caloriesGoal} kcal<br>
+            Protéines : ${data.proteinsGoal} g<br>
+            Glucides : ${data.carbsGoal} g<br>
+            Lipides : ${data.fatsGoal} g
+        `;
+    } else {
+        document.getElementById('current-goals-text').innerText = 'Aucun objectif défini';
+    }
+}
+    </script>
+</body>
+</html>

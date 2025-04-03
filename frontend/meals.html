@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Repas</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    }
+
+    label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #555;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="date"] {
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus,
+    input[type="date"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+    }
+
+    button[type="submit"] {
+    padding: 12px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    }
+
+    button[type="submit"]:hover {
+    background-color: #45a049;
+    }
+
+    #meal-list {
+    margin-top: 30px;
+    }
+
+    #meal-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    }
+
+    #meal-list li {
+    padding: 10px;
+    background-color: #f4f7f6;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #meal-list li span {
+    font-size: 14px;
+    color: #555;
+    }
+
+    input[type="number"], input[type="text"], input[type="date"] {
+    width: 100%;
+    }
+
+    form > button {
+    align-self: center;
+    }
+
+    #meal-list {
+    margin-top: 30px;
+    font-size: 16px;
+    }
+
+    #meal-list li {
+    background-color: #e9f7f0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    }
+
+    #meal-list li span {
+    font-weight: bold;
+    margin-right: 10px;
+    }
+
+    #meal-list li span:nth-child(2) {
+    color: #4CAF50;
+    }
+
+    #meal-list li span:nth-child(3) {
+    color: #2196F3;
+    }
+
+    #meal-list li span:nth-child(4) {
+    color: #FF9800;
+    }
+
+    #meal-list li span:nth-child(5) {
+    color: #F44336;
+    }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="meals.html">Repas</a></li>
+            <li><a href="goals.html">Objectifs</a></li>
+            <li><a href="stats.html">Statistiques</a></li>
+        </ul>
+    </nav>
+
+    <main id="meals">
+        <h1>Mes repas</h1>
+        <button id="show-form">Ajouter un repas</button>
+        
+        <div class="meal-form" id="meal-form" style="display: none;">
+            <label for="meal-name">Nom du repas</label>
+            <input type="text" id="meal-name" placeholder="Nom du repas">
+            
+            <label for="meal-calories">Calories</label>
+            <input type="number" id="meal-calories" placeholder="Calories">
+            
+            <label for="meal-proteins">Protéines (g)</label>
+            <input type="number" id="meal-proteins" placeholder="Protéines (g)">
+            
+            <label for="meal-carbs">Glucides (g)</label>
+            <input type="number" id="meal-carbs" placeholder="Glucides (g)">
+            
+            <label for="meal-fats">Lipides (g)</label>
+            <input type="number" id="meal-fats" placeholder="Lipides (g)">
+            
+            <label for="meal-date">Date</label>
+            <input type="date" id="meal-date" placeholder="Date" required>
+            
+            <button id="add-meal">Ajouter</button>
+        </div>
+
+        <div class="meal-list" id="meal-list"></div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5001/meals';
+
+        document.getElementById("show-form").addEventListener("click", function() {
+            document.getElementById("meal-form").style.display = "block";
+        });
+
+        document.getElementById("add-meal").addEventListener("click", async function() {
+            const name = document.getElementById("meal-name").value.trim();
+            const calories = Number(document.getElementById("meal-calories").value);
+            const proteins = Number(document.getElementById("meal-proteins").value);
+            const carbs = Number(document.getElementById("meal-carbs").value);
+            const fats = Number(document.getElementById("meal-fats").value);
+            const date = document.getElementById("meal-date").value;
+
+            if (!name || isNaN(calories) || isNaN(proteins) || isNaN(carbs) || isNaN(fats) || !date) {
+                alert("Veuillez remplir tous les champs avec des valeurs valides !");
+                return;
+            }
+
+            const formattedDate = new Date(date).toISOString();
+
+            const meal = {
+                name,
+                calories,
+                proteins,
+                carbs,
+                fats,
+                date: formattedDate
+            };
+
+            console.log("Envoi des données :", meal);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(meal)
+                });
+
+                console.log("Réponse reçue :", response);
+
+                if (response.ok) {
+                    document.getElementById("meal-form").style.display = "none";
+                    loadMeals();
+                } else {
+                    const errorData = await response.json();
+                    console.error("Erreur lors de l'ajout :", errorData);
+                    alert("Erreur lors de l'ajout du repas. Consultez la console.");
+                }
+            } catch (error) {
+                console.error("Erreur réseau :", error);
+                alert("Une erreur s'est produite. Vérifiez la console.");
+            }
+        });
+
+        async function loadMeals() {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            const mealList = document.getElementById("meal-list");
+            mealList.innerHTML = "";
+            data.data.forEach(meal => {
+                const mealItem = document.createElement("div");
+                mealItem.classList.add("meal-item");
+                mealItem.innerHTML = `<strong>${meal.name}</strong> - ${meal.calories} kcal, ${meal.proteins}g protéines, ${meal.carbs}g glucides, ${meal.fats}g lipides, ${new Date(meal.date).toLocaleDateString()}`;
+                mealList.appendChild(mealItem);
+            });
+        }
+
+        loadMeals();
+    </script>
+</body>
+</html>

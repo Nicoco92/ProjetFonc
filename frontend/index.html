@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .progress-container {
+    margin-top: 20px;
+}
+.progress-item {
+    margin-bottom: 15px;
+}
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.progress {
+    height: 100%;
+    width: 0;
+    background-color: #4caf50;
+    transition: width 0.5s ease-in-out;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="meals.html">Repas</a></li>
+            <li><a href="goals.html">Objectifs</a></li>
+            <li><a href="stats.html">Statistiques</a></li>
+        </ul>
+    </nav>
+
+    <main id="dashboard">
+        <h1>Tableau de bord</h1>
+        <div class="progress-container">
+            <div class="progress-item">
+                <span>Calories :</span>
+                <div class="progress-bar"><div class="progress" id="calories-bar"></div></div>
+                <span id="calories-value">0</span> kcal
+            </div>
+            <div class="progress-item">
+                <span>Protéines :</span>
+                <div class="progress-bar"><div class="progress" id="proteins-bar"></div></div>
+                <span id="proteins-value">0</span> g
+            </div>
+            <div class="progress-item">
+                <span>Glucides :</span>
+                <div class="progress-bar"><div class="progress" id="carbs-bar"></div></div>
+                <span id="carbs-value">0</span> g
+            </div>
+            <div class="progress-item">
+                <span>Lipides :</span>
+                <div class="progress-bar"><div class="progress" id="fats-bar"></div></div>
+                <span id="fats-value">0</span> g
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchDailyTotals(userId) {
+            try {
+                const response = await fetch(`http://localhost:5001/meals/totals/${userId}`);
+                const totals = await response.json();
+
+                // Mettre à jour les barres de progression
+                document.getElementById('calories-value').textContent = totals.calories;
+                document.getElementById('proteins-value').textContent = totals.proteins;
+                document.getElementById('carbs-value').textContent = totals.carbs;
+                document.getElementById('fats-value').textContent = totals.fats;
+
+                // Mettre à jour les barres de progression
+                const maxCalories = 2500; // Valeur maximale
+                const maxProteins = 150; // Valeur maximale
+                const maxCarbs = 300; // Valeur maximale
+                const maxFats = 100; // Valeur maximale
+
+                document.getElementById('calories-bar').style.width = `${(totals.calories / maxCalories) * 100}%`;
+                document.getElementById('proteins-bar').style.width = `${(totals.proteins / maxProteins) * 100}%`;
+                document.getElementById('carbs-bar').style.width = `${(totals.carbs / maxCarbs) * 100}%`;
+                document.getElementById('fats-bar').style.width = `${(totals.fats / maxFats) * 100}%`;
+
+            } catch (error) {
+                console.error('Erreur lors de la récupération des totaux journaliers:', error);
+            }
+        }
+
+        // Appel de la fonction pour récupérer les totaux journaliers pour un utilisateur
+        fetchDailyTotals(123); // Remplace "123" par l'ID utilisateur réel
+    </script>
+</body>
+</html>

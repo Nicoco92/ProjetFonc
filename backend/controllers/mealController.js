@@ -50,3 +50,14 @@ exports.calculateDailyTotals = async (userId) => {
         throw new Error('Erreur de calcul des totaux journaliers');
     }
 };
+
+// Calculer les totaux journaliers pour un utilisateur
+exports.getDailyTotals = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const dailyTotals = await exports.calculateDailyTotals(userId); // Appel à la fonction de calcul des totaux
+        res.json(dailyTotals); // Retourne les totaux sous forme de réponse JSON
+    } catch (err) {
+        res.status(500).json({ message: 'Erreur serveur lors du calcul des totaux journaliers', error: err });
+    }
+};

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Statistiques</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Charger Chart.js -->
+    <style>
+        #chart-container {
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 400px;
+        }
+
+        .container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="meals.html">Repas</a></li>
+            <li><a href="goals.html">Objectifs</a></li>
+            <li><a href="stats.html">Statistiques</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1>Statistiques - Calories Consommées</h1>
+            <div id="chart-container">
+                <canvas id="caloriesChart"></canvas> <!-- Graphique des calories -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5001/stats/calories'; // URL de la route backend
+
+        // Fonction pour charger les données des calories
+        async function loadStats() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const labels = data.map(item => item._id); // Dates
+                    const calories = data.map(item => item.totalCalories); // Calories totales par jour
+
+                    // Créer le graphique
+                    createChart(labels, calories);
+                } else {
+                    console.error("Erreur lors du chargement des données des statistiques");
+                }
+            } catch (error) {
+                console.error("Erreur réseau :", error);
+            }
+        }
+
+        // Fonction pour créer le graphique
+        function createChart(labels, calories) {
+            const ctx = document.getElementById('caloriesChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line', // Type de graphique (ici une courbe)
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Calories consommées',
+                        data: calories,
+                        borderColor: 'rgba(75, 192, 192, 1)', // Couleur de la ligne
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur de fond
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Charger les statistiques au chargement de la page
+        loadStats();
+    </script>
+</body>
+</html>

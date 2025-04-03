@@ -30,4 +30,7 @@ app.use('/meals', mealRoutes);
 const goalRoutes = require('./routes/goals');
 app.use('/goals', goalRoutes)
 
+const mealController = require('./controllers/mealController');
+app.get('/meals/totals/:userId', mealController.getDailyTotals);
+
 app.listen(PORT, () => console.log(`Serveur démarré sur http://localhost:${PORT}`));
