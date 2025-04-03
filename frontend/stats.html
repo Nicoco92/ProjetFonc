@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriTrack - Statistiques</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Charger Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         #chart-container {
             width: 80%;
@@ -36,25 +36,23 @@
         <div class="container">
             <h1>Statistiques - Calories Consommées</h1>
             <div id="chart-container">
-                <canvas id="caloriesChart"></canvas> <!-- Graphique des calories -->
+                <canvas id="caloriesChart"></canvas>
             </div>
         </div>
     </main>
 
     <script>
-        const API_URL = 'http://localhost:5001/stats/calories'; // URL de la route backend
+        const API_URL = 'http://localhost:5001/stats/calories';
 
-        // Fonction pour charger les données des calories
         async function loadStats() {
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
 
                 if (response.ok) {
-                    const labels = data.map(item => item._id); // Dates
-                    const calories = data.map(item => item.totalCalories); // Calories totales par jour
+                    const labels = data.map(item => item._id);
+                    const calories = data.map(item => item.totalCalories);
 
-                    // Créer le graphique
                     createChart(labels, calories);
                 } else {
                     console.error("Erreur lors du chargement des données des statistiques");
@@ -64,19 +62,18 @@
             }
         }
 
-        // Fonction pour créer le graphique
         function createChart(labels, calories) {
             const ctx = document.getElementById('caloriesChart').getContext('2d');
 
             new Chart(ctx, {
-                type: 'line', // Type de graphique (ici une courbe)
+                type: 'line', 
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'Calories consommées',
                         data: calories,
-                        borderColor: 'rgba(75, 192, 192, 1)', // Couleur de la ligne
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Couleur de fond
+                        borderColor: 'rgba(75, 192, 192, 1)', 
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', 
                         borderWidth: 1
                     }]
                 },
@@ -91,8 +88,6 @@
                 }
             });
         }
-
-        // Charger les statistiques au chargement de la page
         loadStats();
     </script>
 </body>

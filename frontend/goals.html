@@ -13,13 +13,11 @@
         margin: 0 auto;
     }
     
-    /* Labels du formulaire */
     label {
         font-weight: bold;
         font-size: 16px;
     }
     
-    /* Champs de saisie */
     input[type="number"],
     input[type="text"] {
         padding: 10px;
@@ -35,7 +33,6 @@
         outline: none;
     }
     
-    /* Bouton d'envoi */
     button[type="submit"] {
         padding: 12px 20px;
         background-color: #4CAF50;
@@ -51,7 +48,6 @@
         background-color: #45a049;
     }
     
-    /* Affichage des objectifs actuels */
     #current-goals {
         margin-top: 30px;
         text-align: center;
@@ -61,8 +57,6 @@
         font-size: 18px;
         color: #666;
     }
-    
-    /* Améliorations générales */
     input[type="number"], input[type="text"] {
         width: 100%;
     }
@@ -142,7 +136,6 @@
     }
 });
 
-// Fonction pour récupérer les objectifs existants
 async function fetchGoals(userId) {
     const response = await fetch(`http://localhost:5001/goals/${userId}`);
     const data = await response.json();

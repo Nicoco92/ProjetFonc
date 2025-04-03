@@ -69,17 +69,15 @@
                 const response = await fetch(`http://localhost:5001/meals/totals/${userId}`);
                 const totals = await response.json();
 
-                // Mettre à jour les barres de progression
                 document.getElementById('calories-value').textContent = totals.calories;
                 document.getElementById('proteins-value').textContent = totals.proteins;
                 document.getElementById('carbs-value').textContent = totals.carbs;
                 document.getElementById('fats-value').textContent = totals.fats;
 
-                // Mettre à jour les barres de progression
-                const maxCalories = 2500; // Valeur maximale
-                const maxProteins = 150; // Valeur maximale
-                const maxCarbs = 300; // Valeur maximale
-                const maxFats = 100; // Valeur maximale
+                const maxCalories = 2500; 
+                const maxProteins = 150; 
+                const maxCarbs = 300; 
+                const maxFats = 100; 
 
                 document.getElementById('calories-bar').style.width = `${(totals.calories / maxCalories) * 100}%`;
                 document.getElementById('proteins-bar').style.width = `${(totals.proteins / maxProteins) * 100}%`;
@@ -91,8 +89,7 @@
             }
         }
 
-        // Appel de la fonction pour récupérer les totaux journaliers pour un utilisateur
-        fetchDailyTotals(123); // Remplace "123" par l'ID utilisateur réel
+        fetchDailyTotals(123);
     </script>
 </body>
 </html>
